@@ -8,74 +8,87 @@
 // ======== OBJECTS DEFINITIONS ========
 // Define your objects here
 
-const dog = {
-        type: "animal",
-        legs: 4,
-        hands: 0,
-        name: "Fred",
-        gender: "male",
-        friends: ["Adele", "Arnold"],
-        say: () => {
-            return "Woof!";
-        },
-    },
-    cat = {
-        type: "animal",
-        legs: 4,
-        hands: 0,
-        name: "Luna",
-        gender: "female",
-        friends: ["Adele", "Arnold"],
-        say: () => {
-            return "Meow!";
-        },
-    },
-    woman = {
-        type: "human",
-        legs: 2,
-        hands: 2,
-        name: "Adele",
-        gender: "female",
-        friends: ["Arnold", "Luna", "Fred"],
-        say: () => {
-            return "Hey there!";
-        },
-    },
-    man = {
-        type: "human",
-        legs: 2,
-        hands: 2,
-        name: "Arnold",
-        gender: "male",
-        friends: ["Adele", "Luna", "Fred"],
-        say: () => {
-            return "Hello world!";
-        },
-    },
-    catWoman = {
-        type: "cat-woman",
-        legs: 2,
-        hands: 2,
-        name: "Bella",
-        gender: "female",
-        friends: ["Adele", "Luna"],
-        say: cat.say
-    };
+class Organism {
+    constructor(type, legs, hands, name, gender, saying) {
+        this.type = type;
+        this.legs = legs;
+        this.hands = hands;
+        this.name = name;
+        this.gender = gender;
+        this.saying = saying;
+        this.friends = [];
+    }
+
+    addFriends(...Friends) {
+        Friends.forEach(({name}) => this.friends.push(name));
+        return this.friends;
+    }
+
+    toString() {
+        let strings = [
+            `type: ${this.type}; `,
+            `legs: ${this.legs}; `,
+            `hands: ${this.hands}; `,
+            `name: ${this.name}; `,
+            `gender: ${this.gender}; `,
+            `saying: ${this.saying}; `,
+        ];
+
+        if (this.friends.length > 0) {
+            strings.push(`friends: ${this.friends}; `);
+        }
+        return strings.join('');
+    }
+}
+
+class Dog extends Organism {
+    constructor(name, gender) {
+        super('dog', 4, 0, name, gender, 'Woof!');
+    }
+}
+
+class Cat extends Organism {
+    constructor(name, gender) {
+        super('cat', 4, 0, name, gender, 'Meow!');
+    }
+}
+
+class Human extends Organism {
+    constructor(name, gender, saying) {
+        super('human', 2, 2, name, gender, saying);
+    }
+}
+
+class Woman extends Human {
+    constructor(name) {
+        super(name, 'female', 'Hey there!');
+    }
+}
+
+class Man extends Human {
+    constructor(name) {
+        super(name, 'male', 'Hello world!');
+    }
+}
+
+class CatWoman extends Human {
+    constructor(name) {
+        super(name, 'female', cat.saying);
+    }
+}
+
+const dog = new Dog('Fred', 'male');
+const cat = new Cat('Luna', 'female');
+const woman = new Woman('Adele');
+const man = new Man('Arnold');
+const catWoman = new CatWoman('Bella');
+dog.addFriends(woman, man);
+cat.addFriends(woman, man);
+woman.addFriends(man, cat, dog);
+man.addFriends(woman, cat, dog);
+catWoman.addFriends(woman, cat);
 
 const residents = [man, woman, cat, dog, catWoman];
-
-const presentation = ({
-                          type,
-                          legs,
-                          hands,
-                          name,
-                          gender,
-                          friends,
-                          say,
-                      }) => `Hello! My name is ${name}, I'm ${type}. 
-I am ${gender}. I have ${legs} legs and ${hands} hands. 
-These are my friends: ${friends.join(", ")}. 
-${say()}`;
 
 // ======== OUTPUT ========
 /* Use print(message) for output.
@@ -86,6 +99,14 @@ ${say()}`;
    so code reviewers might focus on a single file that is index.js.
    */
 
-residents.forEach((resident) => {
-    print(presentation(resident), "pre");
-});
+residents.forEach((resident) => print(resident));
+
+/* Print examples:
+   print('ABC');
+   print('<strong>ABC</strong>');
+   print('<strong>ABC</strong>', 'div');
+
+   print('human; John; male; 2; 2; Hello world!; Rex, Tom, Jenny');
+   print('human; <strong>John</strong>; male; 2; 2; <em>Hello world!</em>; Rex, Tom, Jenny');
+   print('human; <strong>John</strong>; male; 2; 2; <em>Hello world!</em>; Rex, Tom, Jenny', 'div');
+   */
